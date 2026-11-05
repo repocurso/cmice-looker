@@ -1,3 +1,7 @@
+# =======================================
+#  Looker Model
+# =======================================
+
 connection: "bigquery_public_data_looker"
 
 # include all the views
@@ -13,6 +17,10 @@ datagroup: training_ecommerce_default_datagroup {
 persist_with: training_ecommerce_default_datagroup
 
 label: "E-Commerce Training"
+
+# ---------------------------------------
+#  Explore: Order Items
+# ---------------------------------------
 
 explore: order_items {
   join: users {
@@ -39,6 +47,10 @@ explore: order_items {
     relationship: many_to_one
   }
 }
+
+# ---------------------------------------
+#  Explore: Events
+# ---------------------------------------
 
 explore: events {
   join: event_session_facts {
