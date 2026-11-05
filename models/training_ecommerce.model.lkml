@@ -107,14 +107,14 @@ connection: "bigquery_public_data_looker"
 
 include: "/views/complex/*.view.lkml"
 
-datagroup: departments_refresh {
-  interval_trigger: "60 minutes"
-}
+#datagroup: departments_refresh {
+#  interval_trigger: "60 minutes"
+#}
 
-datagroup: jobs_datagroup {
-  sql_trigger: SELECT CURRENT_DATE() ;;
-  max_cache_age: "24 hours"
-}
+#datagroup: jobs_datagroup {
+#  sql_trigger: SELECT CURRENT_DATE() ;;
+#  max_cache_age: "24 hours"
+#}
 
 # ---------------------------------------
 #  Explore: Human Resources
@@ -123,24 +123,24 @@ datagroup: jobs_datagroup {
 explore: employees {
   label: "Human Resources"
 
-  #sql_always_where: ${regions.region_name} = 'Europe' ;;
-  sql_always_where:
-    ${regions.region_name} = 'Europe'
-    AND
-    {% condition locations.city_filter %}
-       ${locations.city}
-    {% endcondition %} ;;
+  # sql_always_where: ${regions.region_name} = 'Europe' ;;
+  # sql_always_where:
+  #   ${regions.region_name} = 'Europe'
+  #   AND
+  #   {% condition locations.city_filter %}
+  #      ${locations.city}
+  #   {% endcondition %} ;;
 
-    sql_always_having: ${employees.average_salary} >= 7000 ;;
+  #  sql_always_having: ${employees.average_salary} >= 7000 ;;
 
-    always_filter: {
-      filters: [jobs.job_title: "Sales Manager"]
-    }
+  #  always_filter: {
+  #    filters: [jobs.job_title: "Sales Manager"]
+  #  }
 
-    conditionally_filter: {
-      filters: [locations.postal_code: "80925"]
-      unless: [locations.city, locations.city_filter]
-    }
+  #  conditionally_filter: {
+  #    filters: [locations.postal_code: "80925"]
+  #    unless: [locations.city, locations.city_filter]
+  #  }
 
     join: departments {
       type: left_outer
