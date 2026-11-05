@@ -1,5 +1,5 @@
 - dashboard: business_pulse
-  title: Business Pulse
+  title: Business Pulse1
   layout: newspaper
   preferred_viewer: dashboards-next
   embed_style:
