@@ -103,10 +103,6 @@ explore: emp {
 #  Complex Human Resources Model
 # =======================================
 
-# ---------------------------------------
-#  Configuración
-# ---------------------------------------
-
 connection: "bigquery_public_data_looker"
 
 include: "/views/complex/*.view.lkml"
