@@ -57,3 +57,145 @@ explore: events {
     relationship: many_to_one
   }
 }
+
+
+
+
+# =======================================
+
+#  Model
+# =======================================
+
+# ---------------------------------------
+#  Configuración
+# ---------------------------------------
+
+connection: "bigquery_public_data_looker"
+
+include: "/views/complex/*.view.lkml"
+
+datagroup: departments_refresh {
+  interval_trigger: "60 minutes"
+}
+
+datagroup: jobs_datagroup {
+  sql_trigger: SELECT CURRENT_DATE() ;;
+  max_cache_age: "24 hours"
+}
+
+# ---------------------------------------
+#  Explore: Human Resources
+# ---------------------------------------
+
+explore: employees {
+  label: "Human Resources"
+
+  #sql_always_where: ${regions.region_name} = 'Europe' ;;
+  sql_always_where:
+    ${regions.region_name} = 'Europe'
+    AND
+    {% condition locations.city_filter %}
+       ${locations.city}
+    {% endcondition %} ;;
+
+    sql_always_having: ${employees.average_salary} >= 7000 ;;
+
+    always_filter: {
+      filters: [jobs.job_title: "Sales Manager"]
+    }
+
+    conditionally_filter: {
+      filters: [locations.postal_code: "80925"]
+      unless: [locations.city, locations.city_filter]
+    }
+
+    join: departments {
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${employees.department_id} = ${departments.department_id} ;;
+    }
+
+    join: jobs {
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${employees.job_id} = ${jobs.job_id} ;;
+    }
+
+    join: locations {
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${departments.location_id} = ${locations.location_id} ;;
+    }
+
+    join: countries {
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${locations.country_id} = ${countries.country_id} ;;
+    }
+
+    join: regions {
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${countries.region_id} = ${regions.region_id} ;;
+    }
+
+    join: employee_manager {
+      from: employees
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${employees.manager_id} = ${employee_manager.employee_id} ;;
+      fields: [employee_id,first_name,last_name,manager_id]
+      view_label: ""
+    }
+
+    join: department_manager {
+      from: employees
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${departments.manager_id} = ${department_manager.employee_id} ;;
+      view_label: ""
+    }
+  }
+
+# ---------------------------------------
+#  Explore: Employee Job History
+# ---------------------------------------
+
+  explore: job_history {
+    label: "Employee Job History"
+
+    join: employees {
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${job_history.employee_id} = ${employees.employee_id} ;;
+    }
+
+    join: departments {
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${job_history.department_id} = ${departments.department_id} ;;
+    }
+
+    join: jobs {
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${job_history.job_id} = ${jobs.job_id} ;;
+    }
+
+    join: employee_manager {
+      from: employees
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${employees.manager_id} = ${employee_manager.employee_id} ;;
+      fields: [employee_id,first_name,last_name,manager_id]
+      view_label: ""
+    }
+
+    join: department_manager {
+      from: employees
+      type: left_outer
+      relationship: many_to_one
+      sql_on: ${departments.manager_id} = ${department_manager.employee_id} ;;
+      view_label: ""
+    }
+  }
