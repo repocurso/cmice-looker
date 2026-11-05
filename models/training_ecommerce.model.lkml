@@ -1,5 +1,5 @@
 # =======================================
-#  Looker Model
+#  Looker Labs Model
 # =======================================
 
 connection: "bigquery_public_data_looker"
