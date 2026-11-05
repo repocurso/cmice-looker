@@ -37,10 +37,10 @@ view: locations {
         ;;
   }
 
-  filter: city_filter {
-    label: "City Filter"
-    type: string
-  }
+  # filter: city_filter {
+  #   label: "City Filter"
+  #   type: string
+  # }
 
   dimension: location_id {
     primary_key:  yes
