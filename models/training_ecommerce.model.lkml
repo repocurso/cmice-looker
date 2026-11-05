@@ -60,7 +60,36 @@ explore: events {
 
 
 # =======================================
-#  Model Human Resources - Complex
+#  Simple Employees Model
+# =======================================
+
+connection: "bigquery_public_data_looker"
+include: "/views/simple/*.view.lkml"
+
+explore: emp {
+  label: "Simple Employees Model"
+  join: dept {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${emp.deptno} = ${dept.deptno} ;;
+  }
+  join: salgrade {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${emp.sal} >= ${salgrade.losal} AND ${emp.sal} <= ${salgrade.hisal} ;;
+  }
+  join: manager {
+    from: emp
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${emp.mgr} = ${manager.empno} ;;
+    fields: [empno,ename,mgr]
+    view_label: ""
+  }
+}
+
+# =======================================
+#  Complex Human Resources Model 
 # =======================================
 
 # ---------------------------------------
